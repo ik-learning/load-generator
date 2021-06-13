@@ -10,6 +10,7 @@ freezegun = ">=1.1.0"
 
 [packages]
 requests= ">=2.25.0"
+numpy = "*"
 
 [scripts]
 

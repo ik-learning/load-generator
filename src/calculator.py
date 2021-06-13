@@ -9,7 +9,7 @@ SINGLE_THREAD = 1
 PERCENTILES_TO_REPORT = [0.50, 0.75, 0.90, 0.95, 1.0]
 
 
-def required_number_of_users(expected_rps, rps):
+def required_number_of_users(expected_rps, rps) -> int:
     """
     Calculate required number of users/threads, adds extra user/thread
     :param expected_rps: expected rps
