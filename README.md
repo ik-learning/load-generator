@@ -24,5 +24,5 @@ Should be awaialble `http://localhost:8080/__admin`
 
 ```sh
 pipenv shell
-pipenv install
+pipenv install --dev
 ```

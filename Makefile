@@ -24,3 +24,6 @@ wiremock-restart: ## Restart wiremock
 
 wiremock-down: ## Stop wiremock
 	@docker-compose down
+
+unit-tests: ## Run unit tests
+	@python3 -m pytest
