@@ -26,3 +26,23 @@ Should be awaialble `http://localhost:8080/__admin`
 pipenv shell
 pipenv install --dev
 ```
+
+
+## Think about it
+
+- Request wait time????
+- warm up
+- Testing
+- Create controller/worker setup as future improvement
+- Controll CPU/Memory usage for a cannon
+- Test different strategies e.g. speed up, slow down, check
+- why chosed threading/async/multiprocessing
+
+## TODO
+
+- [ ] Calculate RPS
+- [ ] Mutli threading
+- [ ] Output to console every second statistics
+- [ ] Add authentication token
+- [ ] Read from file
+- [ ] Validate json input/output
