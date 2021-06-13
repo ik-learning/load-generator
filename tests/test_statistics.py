@@ -69,7 +69,7 @@ def under_tests(stats: Statistics, number: int):
     ]
     for i in range(number):
         # request number to add here as well
-        result = ResponseStatistics(code=200, time=response_times * 100,)
+        result = ResponseStatistics(code=200, time=response_times * 100, )
         stats.add(result)
 
 
@@ -82,3 +82,10 @@ def test_should_update_statistics_in_threaded_environment():
             executor.submit(under_tests, st, int(expected_numbers / workers))
         executor.submit(under_tests, st, expected_numbers % workers)
     assert st.request_count == expected_numbers
+
+
+def test_should_calculate_average_rps():
+    st = Statistics(time.perf_counter())
+    for i in [35.0, 37.5, 38.3, 38.0, 38.0, 37.7, 38.0, 38.0, 37.9, 38.2, 38.1, 38.1, 37.8]:
+        st.add_rps(i)
+    assert st.average_rps() == 37.7
