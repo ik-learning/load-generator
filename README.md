@@ -19,3 +19,10 @@ curl --location --request POST 'http://localhost:8080/Live' --header 'Content-Ty
 ### Wiremock
 
 Should be awaialble `http://localhost:8080/__admin`
+
+## Setup local Development environment
+
+```sh
+pipenv shell
+pipenv install
+```
