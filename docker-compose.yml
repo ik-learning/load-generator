@@ -8,4 +8,3 @@ services:
     volumes:
       - ./wiremock:/home/wiremock
     restart: always
-
