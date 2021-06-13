@@ -3,19 +3,13 @@ import requests
 import json
 
 from src.statistics import ResponseStatistics
+
 # error https://docs.python-requests.org/en/master/user/quickstart/#timeouts
 
 # we should get requests_time from Statistics
-payload = json.dumps({
-    "name": "test",
-    "date": "09:11:00",
-    "requests_sent": 1
-})
+payload = json.dumps({"name": "test", "date": "09:11:00", "requests_sent": 1})
 
-headers = {
-    'Accept': '*/*',
-    'Content-Type': 'application/json'
-}
+headers = {"Accept": "*/*", "Content-Type": "application/json"}
 
 
 def post(url, timeout=2):
