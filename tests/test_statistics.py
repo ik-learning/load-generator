@@ -12,7 +12,7 @@ AVERAGE_TIME_MILLISECONDS = 254
 
 def test_should_add_counter_increase():
     rst = ResponseStatistics(HTTP_OK, AVERAGE_TIME_MILLISECONDS)
-    st = WarmUpStatistics()
+    st = WarmUpStatistics(None)
     st.add(rst)
     assert st.request_count == 1
 
@@ -23,7 +23,7 @@ def test_should_retrieve_execution_time():
     )
     with freeze_time(initial_datetime) as delorean:
         rst = ResponseStatistics(HTTP_OK, AVERAGE_TIME_MILLISECONDS)
-        st = WarmUpStatistics()
+        st = WarmUpStatistics(time.perf_counter())
         st.add(rst)
         delorean.tick(delta=datetime.timedelta(microseconds=AVERAGE_TIME_MILLISECONDS))
         assert st.execution_time() < 3
@@ -51,7 +51,7 @@ def test_should_retrieve_rps_for_single_thread():
         st.add(ResponseStatistics(HTTP_OK, execution_time))
 
     assert st.request_count == expected_requests
-    assert st.current_rps() == 3.9
+    assert round(st.current_rps(), 0) == 4
 
 
 def under_tests(stats: Statistics, number: int):
@@ -69,7 +69,7 @@ def under_tests(stats: Statistics, number: int):
     ]
     for i in range(number):
         # request number to add here as well
-        result = ResponseStatistics(code=200, time=response_times * 100, )
+        result = ResponseStatistics(code=200, execution_time=response_times * 100, )
         stats.add(result)
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import math
+
 import time
 from typing import List, Dict
 from threading import Lock
@@ -8,9 +8,10 @@ from abc import ABC, abstractmethod
 
 # todo validate json here?
 class ResponseStatistics:
-    def __init__(self, code, time):
+
+    def __init__(self, code, execution_time):
         self.code = code
-        self.time = time
+        self.time = execution_time
 
 
 class AStatistics(ABC):
@@ -43,10 +44,10 @@ class WarmUpStatistics(AStatistics):
     def add(self, st: ResponseStatistics) -> None:
         """
         increase request count by one
+        not a thread safe
         :return: None
         """
         self.request_count += 1
-
         self.response_times.append(st.time)
 
         if st.code not in self.response_codes:
@@ -67,11 +68,12 @@ class Statistics(AStatistics):
     def add(self, st: ResponseStatistics) -> None:
         """
         increase request count by one
+        thread safe
         :return: None
         """
         self.lock.acquire()
-        self.request_count += 1
 
+        self.request_count += 1
         self.response_times.append(st.time)
         self.total_response_time += st.time
 
@@ -79,6 +81,7 @@ class Statistics(AStatistics):
             self.response_codes[st.code] = 1
         else:
             self.response_codes[st.code] = self.response_codes[st.code] + 1
+
         self.lock.release()
 
     def add_rps(self, value) -> None:

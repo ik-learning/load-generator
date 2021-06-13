@@ -21,4 +21,4 @@ def post(url, timeout=2):
         code = response.status_code
     # print(response)
     # print(response.json())
-    return ResponseStatistics(code=code, time=response.elapsed.microseconds,)
+    return ResponseStatistics(code=code, execution_time=response.elapsed.microseconds,)
