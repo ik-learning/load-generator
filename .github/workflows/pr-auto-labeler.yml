@@ -1,0 +1,57 @@
+---
+name: auto-label
+
+on:
+  pull_request:
+    types: [ opened, edited, synchronize, ready_for_review ]
+    branches: [ master, main ]
+  pull_request_target:
+  workflow_dispatch:
+
+
+jobs:
+  simple-labels:
+    runs-on: ubuntu-latest
+    steps:
+    # labels and minimatch globs to match to apply the label.
+    # https://github.com/actions/labeler
+    -
+      name: checkout
+      uses: actions/checkout@v2
+
+    -
+      uses: actions/labeler@v3
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: '.github/label-simple-cfg.yml'
+        sync-labels: false
+
+  set-labels:
+    needs: [ simple-labels ]
+    runs-on: ubuntu-latest
+    steps:
+    # https://github.com/marketplace/actions/github-labeler
+      -
+        name: checkout
+        uses: actions/checkout@v2
+      -
+        name: run labeler
+        if: success()
+        uses: crazy-max/ghaction-github-labeler@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          yaml-file: .github/labels-cfg.yml
+          skip-delete: true
+          dry-run: false
+          # exclude: |
+          #   help*
+          #   *issue
+# https://github.com/marketplace/actions/multi-labeler
+  labels-everything:
+    needs: [ set-labels ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: fuxingloh/multi-labeler@v1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}} # optional, default to '${{ github.token }}'
+          config-path: .github/labeler.yml # optional, default to '.github/labeler.yml'

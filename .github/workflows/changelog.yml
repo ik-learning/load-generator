@@ -1,0 +1,121 @@
+---
+name: changelog
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - v*
+
+env:
+  BRANCH: main
+  COMMITTER_BOT: GitHub <noreply@github.com>
+  AUTHOR_BOT: actions-bot <actions-bot@users.noreply.github.com>
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    name: changelog-generator
+    # if: "!contains(github.event.head_commit.message, 'skip')"
+    steps:
+    # To use this repository's private action, you must check out the repository
+    - name: "📥 Check-out"
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Get the version
+      id: current-tag
+      run: |-
+        echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+        echo ::set-output name=base::$(git rev-list --max-parents=0 HEAD)
+
+    - name: changelog
+      id: ch
+      uses: jimschubert/beast-changelog-action@v1
+      with:
+        FROM: ${{ steps.current-tag.outputs.base }}
+        TO: HEAD
+        OUTPUT: ./CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # with:
+      #   from: ${{ steps.current-tag.outputs.base_version }}
+      #   to: HEAD
+        # config_file: changelog-ci-config.json
+      # Add this if you are using it on a private repository
+      # Or if you have turned on commenting through the config file.
+      # env:
+      #   github_token: ${{secrets.GITHUB_TOKEN}}
+
+    # - uses: fabernovel/github-changelog-generator-action@v1.0.0-alpha02
+    #   id: ch
+    #   with:
+    #     # You can pass any parameters from https://github.com/github-changelog-generator/github-changelog-generator/wiki/Advanced-change-log-generation-examples#additional-option
+    #     options: --token ${{ secrets.GITHUB_TOKEN }}
+    # - name: "✏️ Generate full changelog"
+    #   id: ch
+    #   uses: heinrichreimer/github-changelog-generator-action@v2.1.1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     output: CHANGELOG.md
+    #     issuesWoLabels: true
+    #     pullRequests: true
+    #     prWoLabels: true
+    #     author: true
+    #     unreleased: true
+    #     futureRelease: true
+    #     # headerLabel: "# 📑 Changelog"
+    #     # breakingLabel: '### 💥 Breaking'
+    #     # enhancementLabel: '### 🚀 Enhancements'
+    #     # bugsLabel: '### 🐛 Bug fixes'
+    #     # deprecatedLabel: '### ⚠️ Deprecations'
+    #     # removedLabel: '### 🔥 Removals'
+    #     # securityLabel: '### 🛡️ Security'
+    #     # issuesLabel: '### 📁 Other issues'
+    #     # prLabel: '### 📁 Other pull requests'
+    #     issues: true
+    #     compareLink: true
+
+
+    # - name: read 'templates/changelog'
+    #   id: ch-template
+    #   uses: juliangruber/read-file-action@v1
+    #   with:
+    #     path: .github/templates/changelog
+
+    # - name: write to changelog.md
+    #   uses: DamianReeves/write-file-action@master
+    #   with:
+    #     path: CHANGELOG.md
+    #     # contents: ${{ steps.ch-template.outputs.content }}
+    #     contents: ${{ steps.ch.outputs.changelog }}
+    #     write-mode: overwrite
+
+    - name: '🖨️ Print changelog to console'
+      run: |
+        cat CHANGELOG.md
+
+    - name: check local changes
+      id: diff
+      run: |
+        changed_files=$(git status --porcelain --untracked-files=all | wc -l)
+        echo ::set-output name=count::$changed_files
+        echo ::set-output name=created::$(date)
+        echo ::set-output name=created::$(date)
+      shell: bash
+
+    #  apply tag
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        file_pattern: CHANGELOG.md
+        commit_message: |
+          'docs: Update CHANGELOG.md "${{ github.workflow }} #${{ github.run_number }}" [skip ci]'
+
+
+
+    # - name: check outputs
+    #   if: ${{ steps.ch.outputs.skipped == 'false' }}
+    #   run: |
+    #     echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+    #     echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
