@@ -2,6 +2,7 @@
 import requests
 import json
 
+from src.statistics import ResponseStatistics
 # error https://docs.python-requests.org/en/master/user/quickstart/#timeouts
 
 # we should get requests_time from Statistics
@@ -26,5 +27,4 @@ def post(url, timeout=2):
         code = response.status_code
     # print(response)
     # print(response.json())
-    # return response.elapsed.microseconds
-    return response.status_code
+    return ResponseStatistics(code=code, time=response.elapsed.microseconds,)

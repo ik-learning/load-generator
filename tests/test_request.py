@@ -13,4 +13,4 @@ def test_should_make_post_request_ok():
                   'http://example.com/Live',
                   json={"successful": True}, status=200)
     actual = request.post(url)
-    assert actual == 200
+    assert actual.code == 200
