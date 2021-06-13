@@ -15,3 +15,12 @@ hooks: ## Setup pre commit.
 
 validate: ## Validate files with pre-commit hooks
 	@pre-commit run --all-files
+
+wiremock-up: ## Run wiremock
+	@docker-compose up -d
+
+wiremock-restart: ## Restart wiremock
+	@docker-compose restart
+
+wiremock-down: ## Stop wiremock
+	@docker-compose down

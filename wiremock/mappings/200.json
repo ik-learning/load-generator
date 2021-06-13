@@ -1,0 +1,36 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/Live",
+    "bodyPatterns": [
+      {
+        "equalToJson": "{ \"name\": \"${json-unit.any-string}\" }",
+        "ignoreExtraElements": true
+      },
+      {
+        "equalToJson": "{ \"date\": \"${json-unit.any-string}\" }",
+        "ignoreExtraElements": true
+      }
+    ],
+    "headers": {
+      "Accept": {
+        "contains": "*/*"
+      },
+      "Content-Type": {
+        "contains": "application/json"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "200.json",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "uniform",
+      "lower": 120,
+      "upper": 220
+    }
+  }
+}
