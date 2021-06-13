@@ -6,7 +6,7 @@ import time
 import math
 import concurrent.futures
 
-from src import request
+from src import request, calculator as calc
 from src.statistics import WarmUpStatistics, Statistics, AStatistics
 
 logging.basicConfig(
@@ -30,39 +30,6 @@ def make_request(st: AStatistics, url: str, number: int):
     logging.debug(f'done: {number}')
 
 
-def required_number_of_users(rps):
-    """
-    Calculate required number of users/threads, adds extra user/thread
-    :param rps: current rps number
-    :return: required number of threads
-    """
-    number_of_threads = 1
-    if rps < EXPECTED_RPS_NUMBER:
-        number_of_threads = math.ceil(EXPECTED_RPS_NUMBER / rps)
-    return number_of_threads
-
-
-def output_statistics(stats: Statistics, frequency=1):
-    """
-    output statistics
-    :param stats:
-    :param frequency: how often to execute statistics
-    :return: output statistics data
-    """
-    # do not start thread right away
-    time.sleep(frequency)
-    while stats.request_count < REQUESTS_COUNT:
-        rps = stats.current_rps()
-        stats.add_rps(rps)
-        logging.info(
-            f'processing. Number of requests:{stats.request_count}. RPS:{rps}. Time:{stats.execution_time()}')
-        time.sleep(frequency)
-    logging.info('completed ...')
-    logging.info(
-        f'\tstatistics. Requests:{stats.request_count}. Time:{stats.execution_time()}. RPS:{stats.average_rps()}'
-    )
-
-
 if __name__ == "__main__":
     start_time = time.perf_counter()
     st = WarmUpStatistics(start_time)
@@ -72,7 +39,7 @@ if __name__ == "__main__":
     logging.info(
         f"warmup. number of requests {st.request_count}. {st.response_codes}. time: {st.execution_time()}"
     )
-    users_count = required_number_of_users(st.current_rps())
+    users_count = calc.required_number_of_users(EXPECTED_RPS_NUMBER, st.current_rps())
     logging.info(
         f"warmup. average RPS for single thread {st.current_rps()}. required number of users: {users_count} "
         f"in order to achieve {EXPECTED_RPS_NUMBER} RPS"
@@ -84,8 +51,8 @@ if __name__ == "__main__":
         for i in range(users_count):
             number_of_requests_per_thread = int(REQUESTS_COUNT / users_count)
             if i == 0:
-                # (optional) first thread should make a bit more requests
+                # (optional) first thread could make more requests, as number may not be divisible
                 number_of_requests_per_thread += REQUESTS_COUNT % users_count
             executor.submit(make_request, stats, REQUEST_URL, number_of_requests_per_thread)
         # statistics thread
-        executor.submit(output_statistics, stats, MONITOR_INTERVAL)
+        executor.submit(stats.print_statistics, REQUESTS_COUNT, MONITOR_INTERVAL)
