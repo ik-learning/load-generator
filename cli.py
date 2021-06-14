@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 import time
-import math
-
+import argparse
 
 from src import request, calculator as calc, simulation as sm
 from src.statistics import WarmUpStatistics, Statistics
@@ -15,15 +15,20 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    start_time = time.perf_counter()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config-file", help='configuration file', default='example.config.json')
+    parser.add_argument("--auth-token", help='authentication token', default=os.environ.get('AUTH_TOKEN'))
+    args = parser.parse_args()
 
-    # TODO: read from args
-    cfg = Config('example.config.json')
+    start_time = time.perf_counter()
+    cfg = Config(args.config_file)
+    logging.info("warmup ...")
     logging.info(f"warmup. warming up servers with {cfg.warmup_requests_count} requests")
 
     stats = WarmUpStatistics(start_time)
-    warmup_simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}')
-    warmup_simulation.make_post_requests(cfg.warmup_requests_count, schemas=cfg.schemas)
+    warmup_simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}', schemas=cfg.schemas,
+                                      auth=args.auth_token)
+    warmup_simulation.make_post_requests(cfg.warmup_requests_count)
 
     logging.info(
         f"warmup. requests: {stats.request_count}. codes: {stats.response_codes}. time: {stats.execution_time()} "
@@ -34,8 +39,8 @@ if __name__ == "__main__":
         f"warmup. average RPS for single thread {stats.current_rps()}. required number of users: {users_count} "
         f"in order to achieve {cfg.rps} RPS"
     )
-    logging.info("ready to run simulation")
+    logging.info("simulation ...")
     simulation_start_time = time.perf_counter()
     stats = Statistics(simulation_start_time)
-    simulation = sm.Simulation(stats=stats, request=request, url=REQUEST_URL)
+    simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}', schemas=cfg.schemas)
     simulation.run(users_count=users_count, requests_count=cfg.requests_count)

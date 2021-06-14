@@ -1,9 +1,9 @@
 {
-  "host": "http://localhost:8080",
+  "host": "https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com",
   "attack": {
     "rps": 30,
-    "requests_count": 350,
-    "warmup_requests_count": 50,
+    "requests_count": 250,
+    "warmup_requests_count": 70,
     "timeout": 2,
     "path": "Live",
     "method": "post",

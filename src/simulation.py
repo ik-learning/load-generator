@@ -13,29 +13,31 @@ logging.basicConfig(
 CONTROLLER_THREADS = 2
 MONITOR_INTERVAL = 1
 
-# we should get requests_time from Statistics
 payload = {"name": "", "date": "", "requests_sent": 0}
 
 
 class Simulation:
 
-    def __init__(self, stats: AStatistics, request, url: str, schemas: dict):
+    def __init__(self, stats: AStatistics, request, url: str, schemas: dict, auth: str):
         self.stats = stats
         self.request = request
         self.url = url
         self.schemas = schemas
+        self.auth = auth
 
     def make_post_requests(self, number: int):
-        logging.debug(f'start: {number}')
+        name = threading.currentThread().getName().lower()
+        logging.debug(f'start: {name}:{number}')
         for _ in range(number):
-            
+
+            # TODO: extract, dummy value object?
             payload['date'] = str(datetime.datetime.utcnow())
-            payload['name'] = threading.currentThread().getName().lower()
+            payload['name'] = name
             payload['requests_sent'] = number
 
-            result = self.request.post(self.url, payload=payload, schemas=self.schemas)
+            result = self.request.post(self.url, payload=payload, schemas=self.schemas, auth=self.auth)
             self.stats.add(result)
-        logging.debug(f'done: {number}')
+        logging.debug(f'done: {name}:{number}')
 
     def run(self, users_count, requests_count):
         with concurrent.futures.ThreadPoolExecutor(max_workers=users_count + CONTROLLER_THREADS) as executor:

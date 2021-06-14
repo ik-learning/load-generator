@@ -27,25 +27,52 @@ pipenv shell
 pipenv install --dev
 ```
 
+## Usage
+
+```
+▶️  ./cli.py --help
+usage: cli.py [-h] [--config-file CONFIG_FILE] [--auth-token AUTH_TOKEN]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config-file CONFIG_FILE
+                        configuration file
+  --auth-token AUTH_TOKEN
+                        authentication token
+```
+
+## RUN Localy
+
+```
+make wiremock-up
+./cli.py
+```
+
+## Run Against Exercise endpoint
+
+```
+export AUTH_TOKEN=<token>
+./cli.py --config-file config.json
+```
 
 ## Think about it
 
 - Request wait time????
 - warm up
 - Testing
-- Create controller/worker setup as future improvement
 - Controll CPU/Memory usage for a cannon
 - Test different strategies e.g. speed up, slow down, check
 - why chosed threading/async/multiprocessing
+- Create controller/worker setup as future improvement
 
-## TODO
+## Features
 
 - [X] Calculate RPS
 - [X] Mutli threading
 - [X] Output to console every second statistics
-- [ ] Dynamic json payload
-- [ ] Add authentication token
-- [ ] Read from file
+- [X] Dynamic json payload
+- [X] Add authentication token support
+- [X] Read configuration from a file
 - [X] Validate json input/output
 - [ ] Output RPS and desired RPS
 - [ ] Output statistics per endpoint
