@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import requests
-import json
 import time
 import logging
 from jsonschema import validate, ValidationError
@@ -10,9 +9,6 @@ from src.statistics import ResponseStatistics
 logging.basicConfig(
     format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
 )
-
-# we should get requests_time from Statistics
-payload = {"name": "test", "date": "09:11:00", "requests_sent": 1}
 
 headers = {"Accept": "*/*", "Content-Type": "application/json"}
 
@@ -29,10 +25,11 @@ FAILURE_EXCEPTIONS = (
 # 2. make requests
 # 3. validate response
 # 4. Aggregate requests metrics
-def post(url, schemas: dict, timeout=2):
+def post(url, payload: dict, schemas: dict, timeout=4):
     """
     Send an HTTP request, and catch any exception that might occur due to connection problems.
-    :param url:  URL for the new `request` object.
+    :param payload: data to send in the body
+    :param url: URL for the new `request` object.
     :param schemas: JSON schema dictionary
     :param timeout: http requests timeout
     :return: statistics object

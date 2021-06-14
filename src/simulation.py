@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import datetime
 import logging
-import time
+import threading
 
 from src.statistics import AStatistics
 import concurrent.futures
@@ -11,6 +12,9 @@ logging.basicConfig(
 
 CONTROLLER_THREADS = 2
 MONITOR_INTERVAL = 1
+
+# we should get requests_time from Statistics
+payload = {"name": "", "date": "", "requests_sent": 0}
 
 
 class Simulation:
@@ -24,7 +28,12 @@ class Simulation:
     def make_post_requests(self, number: int):
         logging.debug(f'start: {number}')
         for _ in range(number):
-            result = self.request.post(self.url, schemas=self.schemas)
+            
+            payload['date'] = str(datetime.datetime.utcnow())
+            payload['name'] = threading.currentThread().getName().lower()
+            payload['requests_sent'] = number
+
+            result = self.request.post(self.url, payload=payload, schemas=self.schemas)
             self.stats.add(result)
         logging.debug(f'done: {number}')
 
