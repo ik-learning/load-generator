@@ -50,3 +50,6 @@ pipenv install --dev
 - [ ] Output RPS and desired RPS
 - [ ] Output statistics per endpoint
 - [ ] Global logging
+- [X] Make explicit number of requests
+- [ ] Run for explicit number of seconds
+- [X] Json schema validator in configuration file

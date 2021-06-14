@@ -25,6 +25,8 @@ class AStatistics(ABC):
         self.started = start_time
         self.request_count: int = count
         self.response_times: List[int] = list()
+        # as for now we not really care what type of error
+        self.errors: List = list()
 
     @abstractmethod
     def add(self, st: ResponseStatistics) -> None:
@@ -54,6 +56,8 @@ class WarmUpStatistics(AStatistics):
         """
         self.request_count += 1
         self.response_times.append(st.time)
+        if st.error:
+            self.errors.append(st.error)
 
         if st.code not in self.response_codes:
             self.response_codes[st.code] = 1
@@ -69,8 +73,6 @@ class Statistics(AStatistics):
         self.rps: List = list()
         self.total_response_time = 0
         self.lock: Lock = Lock()
-        # as for now we not really care what type of error
-        self.errors: List = list()
 
     def add(self, st: ResponseStatistics) -> None:
         """

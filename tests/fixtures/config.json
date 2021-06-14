@@ -1,0 +1,35 @@
+{
+  "host": "http://localhost:8080",
+  "attack": {
+    "rps": 30,
+    "requests_count": 50,
+    "warmup_requests_count": 50,
+    "timeout": 2,
+    "path": "Live",
+    "method": "post",
+    "schemas": {
+      "post": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "requests_sent": {
+            "type": "number"
+          }
+        }
+      },
+      "200": {
+        "type": "object",
+        "properties": {
+          "successful": {
+            "type": "bool"
+          }
+        }
+      }
+    }
+  }
+}

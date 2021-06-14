@@ -23,48 +23,41 @@ FAILURE_EXCEPTIONS = (
     Exception
 )
 
-# TODO: read from file
-schema_post = {
-    "type": "object",
-    "properties": {
-        "name": {"type": "string"},
-        "date": {"type": "string"},
-        "requests_sent": {"type": "number"}
-    }
-}
 
-schema_200 = {
-    "type": "object",
-    "properties": {
-        "successful": {"type": "bool"},
-    }
-}
-
-
-def post(url, schemas=dict(), timeout=2):
+# TODO: method does too much
+# 1. validate input
+# 2. make requests
+# 3. validate response
+# 4. Aggregate requests metrics
+def post(url, schemas: dict, timeout=2):
     """
     Send an HTTP request, and catch any exception that might occur due to connection problems.
-    :param url:
-    :param schemas:
-    :param timeout:
+    :param url:  URL for the new `request` object.
+    :param schemas: JSON schema dictionary
+    :param timeout: http requests timeout
     :return: statistics object
     """
     code = 500
     error = False
     start_time = time.perf_counter()
     try:
-        # TODO: test
-        validate(instance=payload, schema=schema_post)
+
+        if 'post' in schemas:
+            validate(instance=payload, schema=schemas.get('post'))
+
         response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
         code = response.status_code
-        # TODO: test
-        if code == 200:
-            validate(instance=response.json(), schema=schema_200)
-    except ValidationError:
+
+        if code == 200 and code in schemas:
+            validate(instance=response.json(), schema=schemas.get(code))
+
+    except ValidationError as e:
+        logging.error(e)
         error = True
     except FAILURE_EXCEPTIONS as e:
-        logging.debug(e)
+        logging.error(e)
         error = True
+
     elapsed = time.perf_counter() - start_time
 
     return ResponseStatistics(code=code, execution_time=elapsed, error=error)

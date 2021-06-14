@@ -34,3 +34,23 @@ def test_should_handle_error():
     )
     actual = request.post(url)
     assert actual.error is None
+
+
+@responses.activate
+def test_should_success_without_schema_set():
+    url = "http://example.com/Live"
+    responses.add(
+        responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
+    )
+    actual = request.post(url, schemas=dict())
+    assert actual.error is not True
+
+
+@responses.activate
+def test_should_validate_response_schema():
+    url = "http://example.com/Live"
+    responses.add(
+        responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
+    )
+    actual = request.post(url, schemas={})
+    assert actual.error is True

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
+import time
+
 from src.statistics import AStatistics
 import concurrent.futures
 
@@ -13,15 +15,16 @@ MONITOR_INTERVAL = 1
 
 class Simulation:
 
-    def __init__(self, stats: AStatistics, request, url):
+    def __init__(self, stats: AStatistics, request, url: str, schemas: dict):
         self.stats = stats
         self.request = request
         self.url = url
+        self.schemas = schemas
 
     def make_post_requests(self, number: int):
         logging.debug(f'start: {number}')
         for _ in range(number):
-            result = self.request.post(self.url)
+            result = self.request.post(self.url, schemas=self.schemas)
             self.stats.add(result)
         logging.debug(f'done: {number}')
 
