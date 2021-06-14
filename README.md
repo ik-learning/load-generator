@@ -43,9 +43,10 @@ pipenv install --dev
 - [X] Calculate RPS
 - [X] Mutli threading
 - [X] Output to console every second statistics
+- [ ] Dynamic json payload
 - [ ] Add authentication token
 - [ ] Read from file
-- [ ] Validate json input/output
+- [X] Validate json input/output
 - [ ] Output RPS and desired RPS
-- [ ] Output statistics per endpoint  
+- [ ] Output statistics per endpoint
 - [ ] Global logging

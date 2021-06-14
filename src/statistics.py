@@ -84,7 +84,7 @@ class Statistics(AStatistics):
         self.response_times.append(st.time)
         self.total_response_time += st.time
 
-        if st.error is True:
+        if st.error:
             self.errors.append(st.error)
 
         if st.code not in self.response_codes:
