@@ -23,7 +23,7 @@ if __name__ == "__main__":
     start_time = time.perf_counter()
     cfg = Config(args.config_file)
     logging.info("warmup ...")
-    logging.info(f"warmup. warming up servers with {cfg.warmup_requests_count} requests")
+    logging.info(f"warmup. warming up {cfg.host} with {cfg.warmup_requests_count} requests")
 
     stats = WarmUpStatistics(start_time)
     warmup_simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}', schemas=cfg.schemas,
@@ -37,10 +37,18 @@ if __name__ == "__main__":
     users_count = calc.required_number_of_users(cfg.rps, stats.current_rps())
     logging.info(
         f"warmup. average RPS for single thread {stats.current_rps()}. required number of users: {users_count} "
-        f"in order to achieve {cfg.rps} RPS"
+        f"in order to hist target {cfg.rps} RPS"
     )
     logging.info("simulation ...")
     simulation_start_time = time.perf_counter()
     stats = Statistics(simulation_start_time)
-    simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}', schemas=cfg.schemas)
+    simulation = sm.Simulation(stats=stats, request=request, url=f'{cfg.host}/{cfg.path}', schemas=cfg.schemas,
+                               auth=args.auth_token)
     simulation.run(users_count=users_count, requests_count=cfg.requests_count)
+
+    logging.info('completed ...')
+    logging.info(
+        f'\tstatistics. Requests:{stats.request_count}. Time:{stats.execution_time()}'
+        f'\n\t\t\t Average RPS:{stats.average_rps()}. Median RPS:{stats.median_rps()}. target RPS: {cfg.rps}'
+        f'\n\t\t\t Percentiles {stats.quantiles()}.'
+    )

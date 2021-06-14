@@ -53,6 +53,7 @@ make wiremock-up
 ```
 export AUTH_TOKEN=<token>
 ./cli.py --config-file config.json
+./cli.py --config-file ddos.config.json
 ```
 
 ## Think about it
@@ -63,7 +64,7 @@ export AUTH_TOKEN=<token>
 - Controll CPU/Memory usage for a cannon
 - Test different strategies e.g. speed up, slow down, check
 - why chosed threading/async/multiprocessing
-- Create controller/worker setup as future improvement
+- Create controller/worker setup as future improvement as there is probably request limit per IP
 
 ## Features
 

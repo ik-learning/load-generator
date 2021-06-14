@@ -1,9 +1,9 @@
 {
   "host": "https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com",
   "attack": {
-    "rps": 30,
-    "requests_count": 150,
-    "warmup_requests_count": 25,
+    "rps": 60,
+    "requests_count": 550,
+    "warmup_requests_count": 50,
     "timeout": 4,
     "path": "Live",
     "method": "post",

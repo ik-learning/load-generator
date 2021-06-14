@@ -27,6 +27,7 @@ class AStatistics(ABC):
         self.response_times: List[int] = list()
         # as for now we not really care what type of error
         self.errors: List = list()
+        self.response_codes_stats: Dict[str, list] = dict()
 
     @abstractmethod
     def add(self, st: ResponseStatistics) -> None:
@@ -61,8 +62,11 @@ class WarmUpStatistics(AStatistics):
 
         if st.code not in self.response_codes:
             self.response_codes[st.code] = 1
+            self.response_codes_stats[st.code] = [st.time]
         else:
             self.response_codes[st.code] = self.response_codes[st.code] + 1
+            stats = self.response_codes_stats[st.code]
+            stats.append(st.time)
 
 
 class Statistics(AStatistics):
@@ -116,12 +120,6 @@ class Statistics(AStatistics):
             logging.info(
                 f'processing. Number of requests:{self.request_count}. RPS:{rps}. Time:{self.execution_time()}')
             time.sleep(frequency)
-        logging.info('completed ...')
-        logging.info(
-            f'\tstatistics. Requests:{self.request_count}. Time:{self.execution_time()}'
-            f'\n\t\t\t Average RPS:{self.average_rps()}. Median RPS:{self.median_rps()}. Mean RPS: {self.mean_rps()}'
-            f'\n\t\t\t Percentiles {self.quantiles()}.'
-        )
 
     # TODO: move into its own class
     def average_rps(self) -> int:
