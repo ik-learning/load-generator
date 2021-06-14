@@ -40,9 +40,12 @@ pipenv install --dev
 
 ## TODO
 
-- [ ] Calculate RPS
-- [ ] Mutli threading
-- [ ] Output to console every second statistics
+- [X] Calculate RPS
+- [X] Mutli threading
+- [X] Output to console every second statistics
 - [ ] Add authentication token
 - [ ] Read from file
 - [ ] Validate json input/output
+- [ ] Output RPS and desired RPS
+- [ ] Output statistics per endpoint  
+- [ ] Global logging

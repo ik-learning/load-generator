@@ -11,12 +11,12 @@ from src import calculator
 logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S")
 
 
-# todo validate json here?
 class ResponseStatistics:
 
-    def __init__(self, code, execution_time):
+    def __init__(self, code, execution_time, error):
         self.code = code
         self.time = execution_time
+        self.error = error
 
 
 class AStatistics(ABC):
@@ -69,6 +69,8 @@ class Statistics(AStatistics):
         self.rps: List = list()
         self.total_response_time = 0
         self.lock: Lock = Lock()
+        # as for now we not really care what type of error
+        self.errors: List = list()
 
     def add(self, st: ResponseStatistics) -> None:
         """
@@ -81,6 +83,9 @@ class Statistics(AStatistics):
         self.request_count += 1
         self.response_times.append(st.time)
         self.total_response_time += st.time
+
+        if st.error is True:
+            self.errors.append(st.error)
 
         if st.code not in self.response_codes:
             self.response_codes[st.code] = 1

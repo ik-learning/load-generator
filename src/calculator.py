@@ -25,5 +25,6 @@ def required_number_of_users(expected_rps, rps) -> int:
 def percentiles(data: List[float]) -> str:
     result = ''
     for p in PERCENTILES_TO_REPORT:
-        result += f'{p}:{np.percentile(data, p)}. '
+        percentage = int(p*100)
+        result += f'{percentage}%:{np.percentile(data, p)}. '
     return result
