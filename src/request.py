@@ -16,7 +16,7 @@ FAILURE_EXCEPTIONS = (
     ConnectionError,
     ConnectionRefusedError,
     ConnectionResetError,
-    Exception
+    Exception,
 )
 
 
@@ -41,13 +41,16 @@ def post(url, payload: dict, schemas: dict, auth=None, timeout=4):
     start_time = time.perf_counter()
     try:
 
-        if 'post' in schemas:
-            validate(instance=payload, schema=schemas.get('post'))
+        if "post" in schemas:
+            sc = schemas.get("post")
+            validate(instance=payload, schema=sc)
 
         if auth:
-            headers['X-Api-Key'] = auth
+            headers["X-Api-Key"] = auth
 
-        response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
+        response = requests.post(
+            url=url, json=payload, headers=headers, timeout=timeout
+        )
         code = response.status_code
 
         if code == 200 and code in schemas:

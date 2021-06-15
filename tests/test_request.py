@@ -5,6 +5,19 @@ import responses
 
 from src import request
 
+payload = {"name": "", "date": "", "requests_sent": 0}
+
+schemas = {
+    "post": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "required": "true"},
+            "date": {"type": "string"},
+            "requests_sent": {"type": "number"},
+        },
+    }
+}
+
 
 @responses.activate
 def test_should_make_post_request_ok():
@@ -12,17 +25,25 @@ def test_should_make_post_request_ok():
     responses.add(
         responses.POST, "http://example.com/Live", json={"successful": True}, status=200
     )
-    actual = request.post(url)
+    actual = request.post(url, payload=payload, schemas=schemas)
     assert actual.code == 200
+
+
+@responses.activate
+def test_should_make_post_request_500():
+    url = "http://example.com/Live"
+    responses.add(
+        responses.POST, "http://example.com/Live", json={"successful": True}, status=200
+    )
+    actual = request.post(url, payload={}, schemas=schemas)
+    assert actual.code == 500
 
 
 @responses.activate
 def test_should_make_post_request_ok_without_error():
     url = "http://example.com/Live"
-    responses.add(
-        responses.POST, "http://example.com/Live", body=Exception('...')
-    )
-    actual = request.post(url)
+    responses.add(responses.POST, "http://example.com/Live", body=Exception("..."))
+    actual = request.post(url, payload, schemas)
     assert actual.error is True
 
 
@@ -32,8 +53,8 @@ def test_should_handle_error():
     responses.add(
         responses.POST, "http://example.com/Live", json={"successful": True}, status=200
     )
-    actual = request.post(url)
-    assert actual.error is None
+    actual = request.post(url, payload, schemas)
+    assert actual.error is False
 
 
 @responses.activate
@@ -42,7 +63,7 @@ def test_should_success_without_schema_set():
     responses.add(
         responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
     )
-    actual = request.post(url, schemas=dict())
+    actual = request.post(url, payload, schemas=dict())
     assert actual.error is not True
 
 
@@ -52,5 +73,5 @@ def test_should_validate_response_schema():
     responses.add(
         responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
     )
-    actual = request.post(url, schemas={})
-    assert actual.error is True
+    actual = request.post(url, payload, schemas={})
+    assert actual.error is False

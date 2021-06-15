@@ -12,13 +12,16 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "required": "true"
           },
           "date": {
-            "type": "string"
+            "type": "string",
+            "required": "true"
           },
           "requests_sent": {
-            "type": "number"
+            "type": "number",
+            "required": "true"
           }
         }
       },
@@ -26,7 +29,8 @@
         "type": "object",
         "properties": {
           "successful": {
-            "type": "bool"
+            "type": "bool",
+            "required": "true"
           }
         }
       }

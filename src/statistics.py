@@ -8,11 +8,12 @@ import statistics
 
 from src import calculator
 
-logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S")
+logging.basicConfig(
+    format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
+)
 
 
 class ResponseStatistics:
-
     def __init__(self, code, execution_time, error):
         self.code = code
         self.time = execution_time
@@ -20,7 +21,6 @@ class ResponseStatistics:
 
 
 class AStatistics(ABC):
-
     def __init__(self, start_time, count):
         self.started = start_time
         self.request_count: int = count
@@ -70,7 +70,6 @@ class WarmUpStatistics(AStatistics):
 
 
 class Statistics(AStatistics):
-
     def __init__(self, start_time):
         super(Statistics, self).__init__(start_time, 0)
         self.response_codes: Dict[str, int] = dict()
@@ -118,7 +117,8 @@ class Statistics(AStatistics):
             rps = self.current_rps()
             self.add_rps(rps)
             logging.info(
-                f'processing. Number of requests:{self.request_count}. RPS:{rps}. Time:{self.execution_time()}')
+                f"processing. Number of requests:{self.request_count}. RPS:{rps}. Time:{self.execution_time()}"
+            )
             time.sleep(frequency)
 
     # TODO: move into its own class
