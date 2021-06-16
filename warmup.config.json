@@ -1,0 +1,36 @@
+{
+  "host": "https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com",
+  "attack": {
+    "rps": 30,
+    "requests_count": 3,
+    "warmup_requests_count": 25,
+    "timeout": 4,
+    "path": "Live",
+    "method": "post",
+    "schemas": {
+      "post": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "requests_sent": {
+            "type": "number"
+          }
+        }
+      },
+      "200": {
+        "type": "object",
+        "properties": {
+          "successful": {
+            "type": "bool"
+          }
+        }
+      }
+    }
+  }
+}

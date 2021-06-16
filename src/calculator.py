@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import math
 import numpy as np
 from typing import List
 
@@ -9,18 +8,17 @@ THREAD_MULTIPLIER = 1.4
 
 PERCENTILES_TO_REPORT = [0.50, 0.75, 0.90, 0.95, 1.0]
 
+ONE_SECOND = 1
 
-def required_number_of_users(expected_rps, rps) -> int:
+
+def delay_per_request(rps) -> float:
     """
-    Calculate required number of users/threads, adds extra user/thread
-    :param expected_rps: expected rps
-    :param rps: current rps number
-    :return: required number of threads
+    Calculate delay in between requests
+
+    :param rps: target rps
+    :return delay in between requests
     """
-    number_of_threads = SINGLE_THREAD
-    if rps < expected_rps:
-        number_of_threads = math.ceil(expected_rps / rps)
-    return int(number_of_threads * THREAD_MULTIPLIER)
+    return round(ONE_SECOND / rps, 6) if rps > 0 else 0
 
 
 def percentiles(data: List[float]) -> str:

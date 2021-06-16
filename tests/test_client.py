@@ -3,7 +3,7 @@
 # how to use https://github.com/getsentry/responses
 import responses
 
-from src import request
+from src import client
 
 payload = {"name": "", "date": "", "requests_sent": 0}
 
@@ -25,7 +25,7 @@ def test_should_make_post_request_ok():
     responses.add(
         responses.POST, "http://example.com/Live", json={"successful": True}, status=200
     )
-    actual = request.post(url, payload=payload, schemas=schemas)
+    actual = client.post(url, payload=payload, schemas=schemas)
     assert actual.code == 200
 
 
@@ -35,7 +35,7 @@ def test_should_make_post_request_500():
     responses.add(
         responses.POST, "http://example.com/Live", json={"successful": True}, status=200
     )
-    actual = request.post(url, payload={}, schemas=schemas)
+    actual = client.post(url, payload={}, schemas=schemas)
     assert actual.code == 500
 
 
@@ -43,7 +43,7 @@ def test_should_make_post_request_500():
 def test_should_make_post_request_ok_without_error():
     url = "http://example.com/Live"
     responses.add(responses.POST, "http://example.com/Live", body=Exception("..."))
-    actual = request.post(url, payload, schemas)
+    actual = client.post(url, payload, schemas)
     assert actual.error is True
 
 
@@ -53,7 +53,7 @@ def test_should_handle_error():
     responses.add(
         responses.POST, "http://example.com/Live", json={"successful": True}, status=200
     )
-    actual = request.post(url, payload, schemas)
+    actual = client.post(url, payload, schemas)
     assert actual.error is False
 
 
@@ -63,7 +63,7 @@ def test_should_success_without_schema_set():
     responses.add(
         responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
     )
-    actual = request.post(url, payload, schemas=dict())
+    actual = client.post(url, payload, schemas=dict())
     assert actual.error is not True
 
 
@@ -73,5 +73,5 @@ def test_should_validate_response_schema():
     responses.add(
         responses.POST, "http://example.com/Live", json={"incorrect": True}, status=200
     )
-    actual = request.post(url, payload, schemas={})
+    actual = client.post(url, payload, schemas={})
     assert actual.error is False
