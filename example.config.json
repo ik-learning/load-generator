@@ -2,7 +2,7 @@
   "host": "http://localhost:8080",
   "attack": {
     "rps": 30,
-    "requests_count": 350,
+    "requests_count": 150,
     "warmup_requests_count": 50,
     "timeout": 2,
     "path": "Live",
@@ -12,16 +12,14 @@
         "type": "object",
         "properties": {
           "name": {
-            "type": "string",
-            "required": "true"
+            "type": "string"
           },
           "date": {
             "type": "string",
-            "required": "true"
+            "format": "date-time"
           },
           "requests_sent": {
-            "type": "number",
-            "required": "true"
+            "type": "number"
           }
         }
       },

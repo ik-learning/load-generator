@@ -2,12 +2,14 @@
 import datetime
 import logging
 import threading
+import asyncio
+import aiohttp
 
 from src.statistics import AStatistics
-import concurrent.futures
+from jsonschema import validate, ValidationError
 
 logging.basicConfig(
-    format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
+    format="%(asctime)s:%(levelname)s:%(module)s %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
 )
 
 CONTROLLER_THREADS = 2
@@ -16,41 +18,48 @@ MONITOR_INTERVAL = 1
 payload = {"name": "", "date": "", "requests_sent": 0}
 
 
-class Simulation:
-    def __init__(self, stats: AStatistics, request, url: str, schemas: dict, auth: str):
+class SimulationV2:
+
+    def __init__(self, stats: AStatistics, client, url: str, schemas: dict, auth: str):
         self.stats = stats
-        self.request = request
+        self.client = client
         self.url = url
         self.schemas = schemas
         self.auth = auth
 
-    def make_post_requests(self, number: int):
+    async def make_post_requests(self, client, name: str, number: int):
+        payload["date"] = str(datetime.datetime.utcnow())
+        payload["name"] = name
+        payload["requests_sent"] = number
+
+        try:
+
+            if "post" in self.schemas:
+                validate(instance=payload, schema=self.schemas.get("post"))
+
+            result = await self.client.post(client=client, url=self.url, payload=payload, auth=self.auth)
+
+            if result.code == 200 and result.code in self.schemas:
+                validate(instance=result.data, schema=self.schemas.get(result.code))
+
+        except ValidationError as e:
+            logging.error(e)
+            self.stats.validation_error(e.message)
+
+        self.stats.add(result)
+        return result
+
+    async def _wrap(self, number: int, sleep: float):
         name = threading.currentThread().getName().lower()
-        logging.debug(f"start: {name}:{number}")
-        for _ in range(number):
+        tasks = []
+        async with aiohttp.ClientSession() as client:
+            for n in range(number):
+                task = asyncio.ensure_future(self.make_post_requests(client, name, n))
+                tasks.append(task)
+                await asyncio.sleep(sleep)
+            responses = asyncio.gather(*tasks)
+            await responses
 
-            # TODO: extract, dummy value object?
-            payload["date"] = str(datetime.datetime.utcnow())
-            payload["name"] = name
-            payload["requests_sent"] = number
-
-            result = self.request.post(
-                self.url, payload=payload, schemas=self.schemas, auth=self.auth
-            )
-            self.stats.add(result)
-        logging.debug(f"done: {name}:{number}")
-
-    def run(self, users_count, requests_count):
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=users_count + CONTROLLER_THREADS
-        ) as executor:
-            for i in range(users_count):
-                number_of_requests_per_thread = int(requests_count / users_count)
-                if i == 0:
-                    # (optional) first thread could make more requests, as number may not be divisible
-                    number_of_requests_per_thread += requests_count % users_count
-                executor.submit(self.make_post_requests, number_of_requests_per_thread)
-            # statistics thread
-            executor.submit(
-                self.stats.print_statistics, requests_count, MONITOR_INTERVAL
-            )
+    def run(self, requests_count, delay_per_request):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._wrap(requests_count, delay_per_request))

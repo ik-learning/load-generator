@@ -66,6 +66,18 @@ export AUTH_TOKEN=<token>
 - why chosed threading/async/multiprocessing
 - Create controller/worker setup as future improvement as there is probably request limit per IP
 
+## Output
+
+```bash
+07:33:03: run simulation... against https://host/path
+07:33:08: processing. Number of requests:150.
+	average RPS:27.8 and target RPS:30
+	execution time:5.4
+	percentiles:50%:0.16810038817499973. 75%:0.16837483800000008. 90%:0.16837483800000008. 95%:0.16837483800000008. 100%:0.16837483800000008.
+	codes:{200: 150}
+	errors:[]
+```
+
 ## Features
 
 - [X] Calculate RPS

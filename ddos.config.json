@@ -15,7 +15,8 @@
             "type": "string"
           },
           "date": {
-            "type": "string"
+            "type": "string",
+            "format": "date-time"
           },
           "requests_sent": {
             "type": "number"

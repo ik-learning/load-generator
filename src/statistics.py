@@ -2,22 +2,27 @@
 
 import time, logging
 from typing import List, Dict
-from threading import Lock
 from abc import ABC, abstractmethod
-import statistics
 
 from src import calculator
 
 logging.basicConfig(
-    format="%(asctime)s: %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
+    format="%(asctime)s:%(levelname)s:%(module)s %(message)s", level=logging.INFO, datefmt="%H:%M:%S"
 )
 
 
 class ResponseStatistics:
-    def __init__(self, code, execution_time, error):
+    def __init__(self, code, execution_time, error, data={}):
         self.code = code
         self.time = execution_time
         self.error = error
+        self.data = data
+
+    def __str__(self):
+        return f'code:{self.code}. time:{self.time}'
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class AStatistics(ABC):
@@ -28,6 +33,7 @@ class AStatistics(ABC):
         # as for now we not really care what type of error
         self.errors: List = list()
         self.response_codes_stats: Dict[str, list] = dict()
+        self.validation_errors: List[str] = []
 
     @abstractmethod
     def add(self, st: ResponseStatistics) -> None:
@@ -38,6 +44,9 @@ class AStatistics(ABC):
 
     def current_rps(self) -> float:
         return round(self.request_count / self.execution_time(), 1)
+
+    def validation_error(self, value: str):
+        self.validation_errors.append(value)
 
 
 class WarmUpStatistics(AStatistics):
@@ -73,9 +82,7 @@ class Statistics(AStatistics):
     def __init__(self, start_time):
         super(Statistics, self).__init__(start_time, 0)
         self.response_codes: Dict[str, int] = dict()
-        self.rps: List = list()
-        self.total_response_time = 0
-        self.lock: Lock = Lock()
+        self.total_response_time = start_time
 
     def add(self, st: ResponseStatistics) -> None:
         """
@@ -83,55 +90,43 @@ class Statistics(AStatistics):
         thread safe
         :return: None
         """
-        self.lock.acquire()
-
         self.request_count += 1
         self.response_times.append(st.time)
         self.total_response_time += st.time
+        self.response_times.append(st.time)
 
         if st.error:
             self.errors.append(st.error)
-
         if st.code not in self.response_codes:
             self.response_codes[st.code] = 1
         else:
             self.response_codes[st.code] = self.response_codes[st.code] + 1
 
-        self.lock.release()
-
-    def add_rps(self, value) -> None:
-        self.rps.append(value)
-
     # TODO: test
     # TODO: move into its own class
-    def print_statistics(self, total_count, frequency=1):
+    def print_statistics(self, target_rps):
         """
         output statistics
-        :param total_count: total request count
-        :param frequency: how often to execute statistics
-        :return: output statistics data
+        :param target_rps: target rps to achieve
         """
-        # do not start thread right after away
-        time.sleep(frequency)
-        while self.request_count < total_count:
-            rps = self.current_rps()
-            self.add_rps(rps)
-            logging.info(
-                f"processing. Number of requests:{self.request_count}. RPS:{rps}. Time:{self.execution_time()}"
-            )
-            time.sleep(frequency)
+        logging.info(
+            f"processing. Number of requests:{self.request_count}. "
+            f'\n\taverage RPS:{self.average_rps()} and target RPS:{target_rps}'
+            f"\n\texecution time:{self.execution_time()}"
+            f'\n\tpercentiles:{self.quantiles()}'
+            f'\n\tcodes:{self.response_codes}'
+            f'\n\terrors:{self.errors}'
+        )
 
-    # TODO: move into its own class
-    def average_rps(self) -> int:
-        return round(sum(self.rps) / len(self.rps), 1)
-
-    # TODO: test
-    # TODO: move into its own class
-    def median_rps(self) -> int:
-        return round(statistics.median(self.rps), 1)
-
-    def mean_rps(self) -> int:
-        return round(statistics.mean(self.rps), 1)
+    def average_rps(self) -> float:
+        return round(self.request_count / self.execution_time(), 1)
 
     def quantiles(self):
-        return calculator.percentiles(sorted(self.rps, reverse=True))
+        return calculator.percentiles(sorted(self.response_times, reverse=True))
+
+    def __str__(self):
+        return f'\tcodes:{self.response_codes}. requests:{self.request_count}' \
+               f'\n\terrors:{self.errors}'
+
+    def __repr__(self):
+        return self.__str__()

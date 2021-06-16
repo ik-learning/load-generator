@@ -31,7 +31,7 @@ def test_should_retrieve_execution_time():
 
 
 @freeze_time("2021-06-13 11:21:34")
-def test_should_retrieve_rps_for_single_thread():
+def test_should_compute_rps():
     expected_requests = 10
     response_times = [
         0.05,
@@ -49,7 +49,7 @@ def test_should_retrieve_rps_for_single_thread():
     for i in range(expected_requests):
         execution_time = response_times[i]
         time.sleep(execution_time)
-        st.add(ResponseStatistics(HTTP_OK, execution_time))
+        st.add(ResponseStatistics(HTTP_OK, execution_time, error=False))
 
     assert st.request_count == expected_requests
     assert round(st.current_rps(), 0) == 4
@@ -85,24 +85,3 @@ def test_should_update_statistics_in_threaded_environment():
         for i in range(workers):
             executor.submit(under_tests, st, expected_numbers)
     assert st.request_count != expected_numbers
-
-
-def test_should_calculate_average_rps():
-    st = Statistics(time.perf_counter())
-    for i in [
-        35.0,
-        37.5,
-        38.3,
-        38.0,
-        38.0,
-        37.7,
-        38.0,
-        38.0,
-        37.9,
-        38.2,
-        38.1,
-        38.1,
-        37.8,
-    ]:
-        st.add_rps(i)
-    assert st.average_rps() == 37.7
