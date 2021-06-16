@@ -82,13 +82,16 @@ export AUTH_TOKEN=<token>
 ## Output
 
 ```bash
-07:33:03: run simulation... against https://host/path
-07:33:08: processing. Number of requests:150.
+▶️  ./cli.py --config-file config.json
+09:09:34:INFO:cli run simulation... against https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com/Live
+09:09:38:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
+09:09:38:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
+09:09:39:INFO:statistics processing. Number of requests:150.
 	average RPS:27.8 and target RPS:30
 	execution time:5.4
-	percentiles:50%:0.16810038817499973. 75%:0.16837483800000008. 90%:0.16837483800000008. 95%:0.16837483800000008. 100%:0.16837483800000008.
-	codes:{200: 150}
-	errors:[]
+	percentiles:50%:0.19000309598500026. 75%:0.19154420600000055. 90%:0.19154420600000055. 95%:0.19154420600000055. 100%:0.19154420600000055.
+	codes:{200: 147, 429: 2, 502: 1}
+	errors:[True, True]
 ```
 
 ## Features

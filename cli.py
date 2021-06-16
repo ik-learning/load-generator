@@ -6,7 +6,7 @@ import os
 import time
 import argparse
 
-from src import client, calculator as calc
+from src import client_interface, calculator as calc
 from src.statistics import Statistics
 from src.config import Config
 from src.simulation import SimulationV2
@@ -20,7 +20,7 @@ def run(config, target_rps, delay_per_request, token):
     simulation_start_time = time.perf_counter()
     stats = Statistics(simulation_start_time)
     sm = SimulationV2(
-        stats, client=client, url=f'{config.host}/{config.path}', schemas=cfg.schemas, auth=token
+        stats, client=client_interface, url=f'{config.host}/{config.path}', schemas=cfg.schemas, auth=token
     )
     sm.run(requests_count=requests, delay_per_request=delay_per_request)
     stats.print_statistics(target_rps=target_rps)

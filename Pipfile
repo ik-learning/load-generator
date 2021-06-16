@@ -5,10 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 pytest = ">=6.2.0"
-responses = ">=0.13.3"
 freezegun = ">=1.1.0"
 mock = ">=4.0.3"
 parametrized = "v0.8.1"
+pytest-aiohttp = ">=0.3.0"
 
 [packages]
 requests= ">=2.25.0"

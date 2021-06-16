@@ -35,15 +35,14 @@ async def post(client, url: str, payload: dict, auth: str):
             headers=headers,
         ) as resp:
             code = resp.status
-
-            data = await resp.json(content_type=None)
+            data = await resp.json()
 
             return ResponseStatistics(
                 code=code, execution_time=time.perf_counter() - start, error=False, data=data
             )
     except FAILURE_EXCEPTIONS as e:
-        print(await resp.json())
         logging.error(e)
         error = True
+
     elapsed = time.perf_counter() - start
     return ResponseStatistics(code=code, execution_time=elapsed, error=error)
