@@ -1,5 +1,18 @@
 # Load Generator
 
+- [Load Generator](#load-generator)
+  * [Local Development and Testing](#local-development-and-testing)
+    + [Wiremock](#wiremock)
+  * [Setup local Development environment](#setup-local-development-environment)
+  * [Usage](#usage)
+  * [RUN Localy](#run-localy)
+  * [Run Against Exercise endpoint](#run-against-exercise-endpoint)
+  * [Think about it](#think-about-it)
+  * [Output](#output)
+  * [Features](#features)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ## Local Development and Testing
 
 To simplify development added [Wiremock](http://wiremock.org/docs)
@@ -87,8 +100,9 @@ export AUTH_TOKEN=<token>
 - [X] Add authentication token support
 - [X] Read configuration from a file
 - [X] Validate json input/output
-- [ ] Output RPS and desired RPS
-- [ ] Output statistics per endpoint
+- [X] Output RPS and desired RPS
+- [X] Output statistics per endpoint
+- [X] Async requests
 - [ ] Global logging
 - [X] Make explicit number of requests
 - [ ] Run for explicit number of seconds
