@@ -82,16 +82,17 @@ export AUTH_TOKEN=<token>
 ## Output
 
 ```bash
-▶️  ./cli.py --config-file config.json
-09:09:34:INFO:cli run simulation... against https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com/Live
-09:09:38:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
-09:09:38:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
-09:09:39:INFO:statistics processing. Number of requests:150.
-	average RPS:27.8 and target RPS:30
-	execution time:5.4
-	percentiles:50%:0.19000309598500026. 75%:0.19154420600000055. 90%:0.19154420600000055. 95%:0.19154420600000055. 100%:0.19154420600000055.
-	codes:{200: 147, 429: 2, 502: 1}
-	errors:[True, True]
+$ ./cli.py --config-file config.json
+09:13:53:INFO:cli run simulation... against https://c1i55mxsd6.execute-api.us-west-2.amazonaws.com/Live
+09:13:54:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
+09:13:55:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
+09:13:56:ERROR:client_interface Expecting value: line 1 column 1 (char 0)
+09:13:58:INFO:statistics processing. Number of requests:150.
+	average RPS:27.3 and target RPS:30
+	execution time:5.5
+	percentiles:50%:0.18683818540999994. 75%:0.1870355990000001. 90%:0.1870355990000001. 95%:0.1870355990000001. 100%:0.1870355990000001.
+	codes:{200: 144, 429: 2, 500: 2, 502: 1, 301: 1}
+	errors:3
 ```
 
 ## Features

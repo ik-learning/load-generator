@@ -115,7 +115,7 @@ class Statistics(AStatistics):
             f"\n\texecution time:{self.execution_time()}"
             f'\n\tpercentiles:{self.quantiles()}'
             f'\n\tcodes:{self.response_codes}'
-            f'\n\terrors:{self.errors}'
+            f'\n\terrors:{len(self.errors)}'
         )
 
     def average_rps(self) -> float:
