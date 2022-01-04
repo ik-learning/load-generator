@@ -13,6 +13,44 @@
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
+## Problem
+
+Robert Parry <robert@suitedrecruitment.com>
+
+Jun 11, 2021, 6:08 PM
+
+to me, Daniel
+Hi Ivan,
+
+Thanks for taking my call, it sounds like the interview went well. I look forward to receiving the completed test over the weekend.
+
+Please see the test below;
+
+We would like you to solve the following problem and commit your code as it progresses to a git repo you can provide us access to.  We normally allow 3 days for this project but if you require additional time due to prior commitments we are happy to work with you.
+
+PROBLEM:
+As a company that runs HTTP services, questions of scale often come up. When you want to determine how a service will scale
+before turning it loose in the wild, it's often prudent to run a load test to simulate your expected traffic. A good load
+generator should be able to provide ample RPS (requests per second) to help drive out potential performance problems before
+any of your new users see them - the higher the better.
+
+We would like you to construct a simple HTTP load generator using modern C#, python, or C++ async practices. It should accept an input file
+specifying details like hostname, path, and requests per second, and then generate the requested load until the program
+has been shut down. It should also handle/report on any obviously erroneous behavior from the server.
+This task should be time-boxed at somewhere around 2 hours; we are not expecting a world-class application, but merely
+would like to get to know you better as a developer through your code.
+
+### Requirements
+
+REQUIREMENTS:
+* Program must accept file-based input for: serverURL, targetRPS, authKey. Additional parameters may be added as desired for your clarity and ease of use.
+* Program must send up valid request body payload.
+* Program must sanely handle typical HTTP server responses.
+* Program must output to the console the current RPS and target RPS.
+* After the run has completed, program must output a summary of run including relevant request/response metrics.
+* Your API key is limited to 100,000 requests. Please contact us if you need that limit raised for any reason.
+* Program must be submitted via a git repo, and we will want to see commit history
+
 ## Local Development and Testing
 
 To simplify development added [Wiremock](http://wiremock.org/docs)
